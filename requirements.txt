@@ -1,0 +1,25 @@
+# TELEGRAM BOT
+python-telegram-bot==21.11.1
+
+# TELETHON (lấy thông tin user Telegram)
+telethon==1.36.0
+
+# MONGODB
+pymongo==4.11.1
+dnspython==2.7.0
+
+# HTTP / ASYNC
+httpx==0.28.1
+anyio==4.8.0
+aiohttp==3.11.16
+aiohappyeyeballs==2.6.1
+
+# TIME / SCHEDULE
+pytz==2024.1
+tzdata==2025.1
+schedule==1.2.2
+
+# UTILS
+python-dotenv==1.0.1
+cachetools==5.5.2
+typing_extensions==4.12.2
