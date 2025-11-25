@@ -7,7 +7,6 @@ import handlers.admin_handlers as admin_h
 from decorators import troly_only
 from handlers.ultils import handle_info_command, help_command
 
-@troly_only
 async def check_command(update, context):
     await start_telethon()
 

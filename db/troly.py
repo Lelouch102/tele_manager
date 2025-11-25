@@ -74,5 +74,21 @@ class AssistantManager:
         except Exception as e:
             logger.error(f"❌ Lỗi khi lấy danh sách trợ lý từ tro_ly: {e}")
             return []
+        
+    def delete_assistant(self, id_tele):
+        """Xóa một trợ lý theo ID Telegram."""
+        try:
+            result = self.assistant_collection.delete_one({"id_tele": id_tele})
+
+            if result.deleted_count == 0:
+                logger.warning(f"⚠️ Không tìm thấy trợ lý để xóa: id_tele={id_tele}")
+                return False  # Không xóa được vì không tồn tại
+
+            logger.info(f"🗑️ Xóa trợ lý thành công: id_tele={id_tele}")
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Lỗi khi xóa trợ lý: {e}")
+            return False
 
 assistant_manager = AssistantManager()
