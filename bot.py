@@ -6,6 +6,7 @@ from handlers.get_user import get_user_by_phone, start_telethon
 import handlers.admin_handlers as admin_h
 from decorators import troly_only
 from handlers.ultils import handle_info_command, help_command
+from handlers.telethon_pool import init_telethon_clients
 
 async def check_command(update, context):
     await start_telethon()
@@ -78,7 +79,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def main():
     app = ApplicationBuilder().token(config.BOT_TOKEN).request(HTTPXRequest()).build()
-
+    await init_telethon_clients()
+    
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("check", check_command))
 

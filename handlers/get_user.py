@@ -15,7 +15,7 @@ api_id = config.API_ID
 api_hash = config.API_HASH
 
 session_name = f"session_{api_id}"
-client = TelegramClient(session_name, api_id, api_hash)
+# client = TelegramClient(session_name, api_id, api_hash)
 
 
 # async def can_message_user(user_id):
@@ -44,7 +44,8 @@ client = TelegramClient(session_name, api_id, api_hash)
 #         return False
 
 async def get_user_by_phone(phone: str):
-    print(f"[LOG] Bắt đầu lấy thông tin số: {phone}")
+    client = get_next_client()  # 🔥 lấy client khác nhau mỗi lần gọi
+    print(f"[LOG] Dùng client session: {client.session.filename}")
 
     try:
         result = await client(
@@ -57,23 +58,18 @@ async def get_user_by_phone(phone: str):
                 )
             ])
         )
-
     except Exception as e:
         print("[ERROR] Lỗi khi gọi ImportContactsRequest:", e)
         return None
 
     if not result.users:
-        print("[LOG] Không tìm thấy user")
         return None
 
     user = result.users[0]
 
-    # --------------------------
-    # LAST SEEN FORMAT
-    # --------------------------
+    # Xử lý last seen
     if isinstance(user.status, UserStatusOnline):
         last_seen = "🟢 Đang online"
-
     elif isinstance(user.status, UserStatusOffline):
         now = datetime.now(timezone.utc)
         diff = now - user.status.was_online
@@ -82,32 +78,12 @@ async def get_user_by_phone(phone: str):
         hours = diff.seconds // 3600
         minutes = (diff.seconds % 3600) // 60
 
-        if days > 0:
-            last_seen = f"🔵 Online {days} ngày trước"
-        elif hours > 0:
-            last_seen = f"🔵 Online {hours} giờ trước"
-        elif minutes > 0:
-            last_seen = f"🔵 Online {minutes} phút trước"
-        else:
-            last_seen = "🔵 Vừa mới online"
-
+        if days > 0: last_seen = f"🔵 Online {days} ngày trước"
+        elif hours > 0: last_seen = f"🔵 Online {hours} giờ trước"
+        elif minutes > 0: last_seen = f"🔵 Online {minutes} phút trước"
+        else: last_seen = "🔵 Vừa mới online"
     else:
         last_seen = "⚪ Ẩn last seen"
-
-    # --------------------------
-    # AVATAR
-    # --------------------------
-    avatar_path = None
-    # if user.photo:
-    #     avatar_path = f"avatar_{user.id}.jpg"
-    #     try:
-    #         await client.download_profile_photo(user.id, file=avatar_path)
-    #     except Exception as e:
-    #         print("[ERROR] Lỗi tải avatar:", e)
-
-    # --------------------------
-    # CHECK CHAT & ADD
-    # --------------------------
 
     return {
         "id": user.id,
@@ -115,7 +91,6 @@ async def get_user_by_phone(phone: str):
         "username": user.username,
         "phone": user.phone,
         "last_seen": last_seen,
-        "avatar": avatar_path,
     }
 
 
