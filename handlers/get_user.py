@@ -10,11 +10,12 @@ from telethon.tl.types import (
 from telethon.errors import UserPrivacyRestrictedError
 from datetime import datetime, timezone
 import config
+from handlers.telethon_pool import get_next_client
 
-api_id = config.API_ID
-api_hash = config.API_HASH
+# api_id = config.API_ID
+# api_hash = config.API_HASH
 
-session_name = f"session_{api_id}"
+# session_name = f"session_{api_id}"
 # client = TelegramClient(session_name, api_id, api_hash)
 
 
@@ -91,6 +92,7 @@ async def get_user_by_phone(phone: str):
         "username": user.username,
         "phone": user.phone,
         "last_seen": last_seen,
+        "avatar": None,
     }
 
 

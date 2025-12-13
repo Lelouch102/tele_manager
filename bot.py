@@ -9,7 +9,7 @@ from handlers.ultils import handle_info_command, help_command
 from handlers.telethon_pool import init_telethon_clients
 
 async def check_command(update, context):
-    await start_telethon()
+    # await start_telethon()
 
     raw = update.message.text.replace("/check", "").strip()
 
@@ -77,10 +77,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Gửi /check + danh sách số để kiểm tra.")
 
 
-def main():
-    app = ApplicationBuilder().token(config.BOT_TOKEN).request(HTTPXRequest()).build()
+async def post_init(app):
+    print("[LOG] Đang khởi tạo Telethon clients...")
     await init_telethon_clients()
-    
+    print("[LOG] Telethon đã sẵn sàng!")
+
+
+def main():
+    app = (
+        ApplicationBuilder()
+        .token(config.BOT_TOKEN)
+        .request(HTTPXRequest())
+        .post_init(post_init)   # 🔥 chạy init telethon trước polling
+        .build()
+    )
+
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("check", check_command))
 
@@ -89,9 +100,8 @@ def main():
     app.add_handler(CommandHandler("lstroly", admin_h.list_troly))
     
     app.add_handler(CommandHandler("info", handle_info_command))
-    app.add_handler(CommandHandler(["h","help"], help_command))
-    
-    # 👇 FIX HERE: add callback handler
+    app.add_handler(CommandHandler(["h", "help"], help_command))
+
     app.run_polling()
 
 
